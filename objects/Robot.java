@@ -21,6 +21,7 @@ public class Robot extends Body {
     private double baseHeight = 4.0;    // Default base height
     private double mastWidth = 1.4;     // Default mast width
     private double mastHeight = 14.0;   // Default mast height
+    private double minLiftHeight = -0.45; // Minimum lift height
     private double forksWidth = 6.0;    // Default forks width
     private double forksHeight = 3.0;   // Default forks height
 
@@ -33,9 +34,6 @@ public class Robot extends Body {
     private final double liftRate = 2.0;     // m/s (reduced for better control)
     private final double tiltRate = 20.0;    // deg/s (reduced for better control)
 
-    // Cargo handling
-    private Cargo carrying = null;
-    private Vec2 cargoOffset = new Vec2();
 
     public Robot(double x, double y) {
         // Start with default size, will update with sprite sizes
@@ -102,7 +100,7 @@ public class Robot extends Body {
         if (SimulationPanel.input.liftDown) cmd -= 1;
 
         lift += cmd * liftRate * dt;
-        lift = clamp(lift, -0.35, mastHeight);
+        lift = clamp(lift, minLiftHeight, mastHeight);
     }
 
     public void applyTilt(World world, double dt) {
