@@ -1,0 +1,113 @@
+package objects;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import core.GameObject;
+import core.World;
+import ui.SimulationPanel;
+import ui.SpriteLoader;
+import physics.AABB;
+
+/**
+ * Represents a bucket/container where cargo can be scored
+ */
+public class Bucket extends GameObject {
+    private double x, y;
+    private double innerW, innerH;
+    private double wall;
+    private BufferedImage sprite;
+    private double spriteWidth;
+    private double spriteHeight;
+
+    public Bucket(double x, double y, double innerW, double innerH, double wall) {
+        this.x = x;
+        this.y = y;
+        this.wall = wall;
+
+        // Load sprite and adjust bucket size to match
+        SpriteLoader.SpriteInfo spriteInfo = SpriteLoader.getSprite("bucket");
+        sprite = spriteInfo.image;
+        if (sprite != null) {
+            spriteWidth = spriteInfo.widthMeters;
+            spriteHeight = spriteInfo.heightMeters;
+            // Make inner area match sprite dimensions more precisely
+            this.innerW = spriteWidth * 0.6; // 60% of sprite width for scoring area
+            this.innerH = spriteHeight * 0.4; // 40% of sprite height for scoring area
+            this.wall = spriteWidth * 0.1; // 10% of sprite width for walls
+        } else {
+            // Use provided dimensions if no sprite
+            this.innerW = innerW;
+            this.innerH = innerH;
+        }
+    }
+
+    // Get collision bounds for walls
+    public AABB getRightWall() {
+        return new AABB(x + innerW/2 + wall/2, y, wall, innerH + wall);
+    }
+
+    public AABB getBottom() {
+        return new AABB(x, y - innerH/2 - wall/2, innerW + wall*2, wall);
+    }
+
+    public boolean isInside(double px, double py) {
+        return Math.abs(px - x) <= innerW/2 && Math.abs(py - y) <= innerH/2;
+    }
+
+    @Override
+    public void update(World world, double dt) {
+        // Bucket is static, no update needed
+    }
+
+    @Override
+    public void draw(Graphics2D g) {
+        if (sprite != null) {
+            // Draw bucket sprite at native resolution
+            Point screenPos = SimulationPanel.toScreen(x, y);
+            g.drawImage(sprite,
+                screenPos.x - (int)(spriteWidth * SimulationPanel.PPM / 2),
+                screenPos.y - (int)(spriteHeight * SimulationPanel.PPM / 2),
+                (int)(spriteWidth * SimulationPanel.PPM),
+                (int)(spriteHeight * SimulationPanel.PPM), null);
+        } else {
+            // Fallback to drawn graphics
+            Color wallColor = new Color(30, 160, 80);
+            g.setColor(wallColor);
+
+            // Right wall
+            drawRectCenter(g, x + innerW/2 + wall/2, y, wall, innerH + wall, true);
+
+            // Bottom
+            drawRectCenter(g, x, y - innerH/2 - wall/2, innerW + wall*2, wall, true);
+        }
+
+        // Draw scoring zone outline
+        g.setColor(new Color(255, 215, 0, 30)); // More transparent gold
+        drawRectCenter(g, x, y, innerW, innerH, true);
+        g.setColor(new Color(255, 215, 0, 100)); // Semi-transparent outline
+        g.setStroke(new BasicStroke(1));
+        drawRectCenter(g, x, y, innerW, innerH, false);
+
+        // DEBUG: Draw actual collision bounds for walls
+        g.setColor(new Color(0, 255, 255, 80));
+        g.setStroke(new BasicStroke(1));
+        AABB rightWall = getRightWall();
+        AABB bottom = getBottom();
+        drawRectCenter(g, rightWall.x, rightWall.y, rightWall.w * 2, rightWall.h * 2, true);
+        drawRectCenter(g, bottom.x, bottom.y, bottom.w * 2, bottom.h * 2, true);
+    }
+
+    private void drawRectCenter(Graphics2D g, double cx, double cy, double w, double h, boolean fill) {
+        Point screenPos = SimulationPanel.toScreen(cx, cy);
+        int screenW = (int)(w * SimulationPanel.PPM);
+        int screenH = (int)(h * SimulationPanel.PPM);
+        int screenX = screenPos.x - screenW/2;
+        int screenY = screenPos.y - screenH/2;
+
+        if (fill) {
+            g.fillRect(screenX, screenY, screenW, screenH);
+        } else {
+            g.drawRect(screenX, screenY, screenW, screenH);
+        }
+    }
+}
