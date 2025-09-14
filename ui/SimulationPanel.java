@@ -1,17 +1,22 @@
 package ui;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.io.File;
 import java.util.List;
 import core.*;
 import objects.*;
 import physics.*;
-
+import java.awt.image.BufferedImage;
 /**
  * Main simulation panel that handles rendering and game loop
  */
 public class SimulationPanel extends JPanel implements Runnable {
+    private BufferedImage background;
+
     // Pixels per meter for rendering
     public static final int PPM = 50; // Matches SpriteLoader.DEFAULT_PIXELS_PER_METER for 1:1 mapping
 
@@ -39,6 +44,13 @@ public class SimulationPanel extends JPanel implements Runnable {
         setFocusable(true);
         addKeyListener(input);
         world.reset();
+
+        try {
+            // Load background image from resources
+            background = ImageIO.read(new File("assets/sprites/bg.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void start() {
@@ -115,11 +127,16 @@ public class SimulationPanel extends JPanel implements Runnable {
     protected void paintComponent(Graphics gRaw) {
         super.paintComponent(gRaw);
         Graphics2D g = (Graphics2D) gRaw;
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Draw sky background
-        g.setColor(new Color(235, 244, 255));
-        g.fillRect(0, 0, widthPx, heightPx);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // Draw background image scaled to panel size
+        if (background != null) {
+            g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+        } else {
+            // Draw sky background
+            g.setColor(new Color(235, 244, 255));
+            g.fillRect(0, 0, widthPx, heightPx);
+        }
 
         // Draw ground
         g.setColor(new Color(90, 90, 90));
