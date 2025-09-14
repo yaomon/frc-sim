@@ -207,14 +207,14 @@ public class Robot extends Body {
             // Fallback to drawn graphics
             // Draw chassis
             g.setColor(new Color(40, 120, 200));
-            drawRectCenter(g, position.x, position.y, bounds.w * 2, bounds.h * 2, true);
+            SimulationPanel.drawRectCenter(g, position.x, position.y, bounds.w * 2, bounds.h * 2, true);
             g.setColor(Color.BLACK);
-            drawRectCenter(g, position.x, position.y, bounds.w * 2, bounds.h * 2, false);
+            SimulationPanel.drawRectCenter(g, position.x, position.y, bounds.w * 2, bounds.h * 2, false);
 
             // Draw mast
             Vec2 base = getForkBaseWorld();
             g.setColor(new Color(60, 60, 60));
-            drawRectCenter(g, base.x - 0.7, position.y + bounds.h + mastHeight/2, 1.4, mastHeight, true);
+            SimulationPanel.drawRectCenter(g, base.x - 0.7, position.y + bounds.h + mastHeight/2, 1.4, mastHeight, true);
 
             // Draw forks
             double rad = Math.toRadians(tiltDeg);
@@ -227,20 +227,6 @@ public class Robot extends Body {
             drawLine(g, base.x, base.y + 0.3,
                        base.x + dx * forkLength,
                        base.y + 0.3 + dy * forkLength);
-        }
-    }
-
-    private void drawRectCenter(Graphics2D g, double cx, double cy, double w, double h, boolean fill) {
-        Point screenPos = SimulationPanel.toScreen(cx, cy);
-        int screenW = (int)(w * SimulationPanel.PPM);
-        int screenH = (int)(h * SimulationPanel.PPM);
-        int screenX = screenPos.x - screenW/2;
-        int screenY = screenPos.y - screenH/2;
-
-        if (fill) {
-            g.fillRect(screenX, screenY, screenW, screenH);
-        } else {
-            g.drawRect(screenX, screenY, screenW, screenH);
         }
     }
 

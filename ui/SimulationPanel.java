@@ -139,11 +139,7 @@ public class SimulationPanel extends JPanel implements Runnable {
         }
 
         // Draw ground
-        g.setColor(new Color(90, 90, 90));
-        Point left = toScreen(world.leftX, world.groundY);
-        Point right = toScreen(world.rightX, world.groundY);
-        g.setStroke(new BasicStroke(4));
-        g.drawLine(left.x, left.y, right.x, right.y);
+        drawRectCenter(g, (world.leftX + world.rightX)/2, world.groundY/2, widthPx / (double)PPM, world.groundY, true);
 
         // Draw all objects
         for (GameObject obj : world.objects) {
@@ -190,5 +186,27 @@ public class SimulationPanel extends JPanel implements Runnable {
         int W = (int)Math.round(w * PPM);
         int H = (int)Math.round(h * PPM);
         return new Rect(p.x - W/2, p.y - H/2, W, H);
+    }
+    /**
+     * Draw a rectangle centered at (cx, cy) with width w and height h in world coordinates
+     * @param g Graphics2D context
+     * @param cx Center x in meters
+     * @param cy Center y in meters
+     * @param w Width in meters
+     * @param h Height in meters
+     * @param fill True to fill, false to stroke
+     */
+    public static void drawRectCenter(Graphics2D g, double cx, double cy, double w, double h, boolean fill) {
+        Point screenPos = toScreen(cx, cy);
+        int screenW = (int)(w * PPM);
+        int screenH = (int)(h * PPM);
+        int screenX = screenPos.x - screenW/2;
+        int screenY = screenPos.y - screenH/2;
+
+        if (fill) {
+            g.fillRect(screenX, screenY, screenW, screenH);
+        } else {
+            g.drawRect(screenX, screenY, screenW, screenH);
+        }
     }
 }

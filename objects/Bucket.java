@@ -75,31 +75,17 @@ public class Bucket extends GameObject {
             g.setColor(wallColor);
 
             // Right wall
-            drawRectCenter(g, x + innerW/2 + wall/2, y, wall, innerH + wall, true);
+            SimulationPanel.drawRectCenter(g, x + innerW/2 + wall/2, y, wall, innerH + wall, true);
 
             // Bottom
-            drawRectCenter(g, x, y - innerH/2 - wall/2, innerW + wall*2, wall, true);
+            SimulationPanel.drawRectCenter(g, x, y - innerH/2 - wall/2, innerW + wall*2, wall, true);
         }
 
         // Draw scoring zone outline
         g.setColor(new Color(255, 215, 0, 30)); // More transparent gold
-        drawRectCenter(g, x, y, innerW, innerH, true);
+        SimulationPanel.drawRectCenter(g, x, y, innerW, innerH, true);
         g.setColor(new Color(255, 215, 0, 100)); // Semi-transparent outline
         g.setStroke(new BasicStroke(1));
-        drawRectCenter(g, x, y, innerW, innerH, false);
-    }
-
-    private void drawRectCenter(Graphics2D g, double cx, double cy, double w, double h, boolean fill) {
-        Point screenPos = SimulationPanel.toScreen(cx, cy);
-        int screenW = (int)(w * SimulationPanel.PPM);
-        int screenH = (int)(h * SimulationPanel.PPM);
-        int screenX = screenPos.x - screenW/2;
-        int screenY = screenPos.y - screenH/2;
-
-        if (fill) {
-            g.fillRect(screenX, screenY, screenW, screenH);
-        } else {
-            g.drawRect(screenX, screenY, screenW, screenH);
-        }
+        SimulationPanel.drawRectCenter(g, x, y, innerW, innerH, false);
     }
 }

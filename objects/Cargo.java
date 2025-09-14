@@ -137,7 +137,7 @@ public class Cargo extends Body {
                          Math.max(0, color.getBlue()-40))
             );
             g.setPaint(gradient);
-            drawRectCenter(g, position.x, position.y, bounds.w * 2, bounds.h * 2, true);
+            SimulationPanel.drawRectCenter(g, position.x, position.y, bounds.w * 2, bounds.h * 2, true);
 
             // Draw metallic-looking edges
             g.setColor(new Color(220, 220, 220, 140));
@@ -147,7 +147,7 @@ public class Cargo extends Body {
             // Draw outline
             g.setColor(new Color(0, 0, 0, 140));
             g.setStroke(new BasicStroke(1));
-            drawRectCenter(g, position.x, position.y, bounds.w * 2, bounds.h * 2, false);
+            SimulationPanel.drawRectCenter(g, position.x, position.y, bounds.w * 2, bounds.h * 2, false);
         }
 
         // Restore original transform
@@ -164,19 +164,5 @@ public class Cargo extends Body {
         // Draw just the top and left edges for a metallic highlight
         g.drawLine(screenX, screenY, screenX + screenW, screenY);
         g.drawLine(screenX, screenY, screenX, screenY + screenH);
-    }
-
-    private void drawRectCenter(Graphics2D g, double cx, double cy, double w, double h, boolean fill) {
-        Point screenPos = SimulationPanel.toScreen(cx, cy);
-        int screenW = (int)(w * SimulationPanel.PPM);
-        int screenH = (int)(h * SimulationPanel.PPM);
-        int screenX = screenPos.x - screenW/2;
-        int screenY = screenPos.y - screenH/2;
-
-        if (fill) {
-            g.fillRect(screenX, screenY, screenW, screenH);
-        } else {
-            g.drawRect(screenX, screenY, screenW, screenH);
-        }
     }
 }
