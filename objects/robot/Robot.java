@@ -1,17 +1,20 @@
-package objects;
+package objects.robot;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.List;
 import physics.*;
 import core.*;
+import objects.robot.subsystems.Brakes;
+import objects.robot.subsystems.DriveMotor;
+import objects.robot.subsystems.LiftMotor;
+import objects.robot.subsystems.TiltMotor;
 import ui.SimulationPanel;
 import ui.SpriteLoader;
 
 public class Robot extends Body {
     // Robot dimensions and graphics
-    private double maxLiftHeight = 14.0;  // Default maximum lift travel
+    private double maxLiftHeight;  // Maximum lift travel
     private double forkLength = 3.0;     // Default fork length
 
     private BufferedImage robotSprite;
@@ -26,14 +29,20 @@ public class Robot extends Body {
     private double forksHeight = 3.0;   // Default forks height
 
     // Actuated state
-    private double lift = 0.0;        // 0 to mastHeight
-    private double tiltDeg = 5.0;     // -20 to +30 (back is +)
+    public double lift = 0.0;
+    public double tiltDeg = 0.0;
 
     // Performance characteristics
-    private final double driveForce = 400;   // Newtons (reduced for slower movement)
-    private final double liftRate = 2.0;     // m/s (reduced for better control)
-    private final double tiltRate = 20.0;    // deg/s (reduced for better control)
+    private final double driveForce = 20.0; // N (reduced for better control)
+    private final double liftRate = 0.1; // m/s (reduced for better control)
+    private final double tiltRate = 15.0; // deg/s (reduced for better control)
 
+    public DriveMotor driveMotor = new DriveMotor(this);
+    public Brakes brakes = new Brakes(this);
+    public LiftMotor liftMotor = new LiftMotor(this);
+    public TiltMotor tiltMotor = new TiltMotor(this);
+
+    public GameObject[] mechanisms = { driveMotor, brakes, liftMotor, tiltMotor};
 
     public Robot(double x, double y) {
         // Start with default size, will update with sprite sizes
@@ -70,46 +79,51 @@ public class Robot extends Body {
     public void update(World world, double dt) {
         // Drive commands
         applyDrive(world, dt);
-
-        // Physics update
-        super.update(world, dt);
-
         // Mechanism updates
         applyLift(world, dt);
         applyTilt(world, dt);
+
+        // Physics update
+        super.update(world, dt);
+        // Simulate boundaries
+        lift = clamp(lift, minLiftHeight, mastHeight);
+        tiltDeg = clamp(tiltDeg, -15, 35);
     }
 
     public void applyDrive(World world, double dt) {
         if (SimulationPanel.input.left) {
-            addForce(-driveForce, 0);
+            driveMotor.setPower(-driveForce);
+        } else if (SimulationPanel.input.right) {
+            driveMotor.setPower(driveForce);
+        } else {
+            driveMotor.setPower(0);
         }
-        if (SimulationPanel.input.right) {
-            addForce(driveForce, 0);
-        }
+
         if (SimulationPanel.input.brake) {
-            velocity.x *= 0.3; // Stronger braking
-            if (Math.abs(velocity.x) < 0.2) { // Stop at lower speed
-                velocity.x = 0;
-            }
+            brakes.setBrakeForce(100);
+        } else {
+            brakes.setBrakeForce(0);
         }
     }
 
     public void applyLift(World world, double dt) {
-        double cmd = 0;
-        if (SimulationPanel.input.liftUp) cmd += 1;
-        if (SimulationPanel.input.liftDown) cmd -= 1;
-
-        lift += cmd * liftRate * dt;
-        lift = clamp(lift, minLiftHeight, mastHeight);
+        if (SimulationPanel.input.liftUp) {
+            liftMotor.setPower(liftRate);
+        } else if (SimulationPanel.input.liftDown) {
+            liftMotor.setPower(-liftRate);
+        } else {
+            liftMotor.setPower(0);
+        }
     }
 
     public void applyTilt(World world, double dt) {
-        double cmd = 0;
-        if (SimulationPanel.input.tiltBack) cmd += 1;
-        if (SimulationPanel.input.tiltFwd) cmd -= 1;
-
-        tiltDeg += cmd * tiltRate * dt;
-        tiltDeg = clamp(tiltDeg, -15, 35);
+        if (SimulationPanel.input.tiltFwd) {
+            tiltMotor.setPower(-tiltRate);
+        } else if (SimulationPanel.input.tiltBack) {
+            tiltMotor.setPower(tiltRate);
+        } else {
+            tiltMotor.setPower(0);
+        }
     }
 
     private Vec2 getForkBaseWorld() {

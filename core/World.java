@@ -2,8 +2,9 @@ package core;
 
 import java.util.ArrayList;
 import java.util.List;
-import objects.Robot;
+
 import objects.Cargo;
+import objects.robot.*;
 import objects.Bucket;
 
 /**
@@ -43,6 +44,7 @@ public class World {
         // Add main objects
         objects.add(bucket);
         objects.add(robot);
+        objects.addAll(List.of(robot.mechanisms));
 
         // Create cargo boxes - start them in a neat stack away from the robot
         for (int i = 0; i < 6; i++) {
