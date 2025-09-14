@@ -91,39 +91,17 @@ public class Robot extends Body {
     }
 
     public void applyDrive(World world, double dt) {
-        if (SimulationPanel.input.left) {
-            driveMotor.setPower(-driveForce);
-        } else if (SimulationPanel.input.right) {
-            driveMotor.setPower(driveForce);
-        } else {
-            driveMotor.setPower(0);
-        }
-
-        if (SimulationPanel.input.brake) {
-            brakes.setBrakeForce(100);
-        } else {
-            brakes.setBrakeForce(0);
-        }
+        // IMPLEMENTATION NEEDED
+        // Drive forward/backward
+        // Brake
     }
 
     public void applyLift(World world, double dt) {
-        if (SimulationPanel.input.liftUp) {
-            liftMotor.setPower(liftRate);
-        } else if (SimulationPanel.input.liftDown) {
-            liftMotor.setPower(-liftRate);
-        } else {
-            liftMotor.setPower(0);
-        }
+        // IMPLEMENTATION NEEDED
     }
 
     public void applyTilt(World world, double dt) {
-        if (SimulationPanel.input.tiltFwd) {
-            tiltMotor.setPower(-tiltRate);
-        } else if (SimulationPanel.input.tiltBack) {
-            tiltMotor.setPower(tiltRate);
-        } else {
-            tiltMotor.setPower(0);
-        }
+        // IMPLEMENTATION NEEDED
     }
 
     private Vec2 getForkBaseWorld() {
