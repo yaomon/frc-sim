@@ -150,11 +150,6 @@ public class Cargo extends Body {
             drawRectCenter(g, position.x, position.y, bounds.w * 2, bounds.h * 2, false);
         }
 
-        // DEBUG: Draw actual collision bounds
-        g.setColor(new Color(255, 0, 255, 100));
-        g.setStroke(new BasicStroke(1));
-        drawRectCenter(g, bounds.x, bounds.y, bounds.w * 2, bounds.h * 2, false);
-
         // Restore original transform
         g.setTransform(oldTransform);
     }

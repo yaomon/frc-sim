@@ -203,17 +203,6 @@ public class Robot extends Body {
             // Reset transform
             g.setTransform(oldTransform);
 
-            // DEBUG: Draw actual collision bounds
-            g.setColor(new Color(255, 255, 0, 100));
-            g.setStroke(new BasicStroke(1));
-            drawRectCenter(g, position.x, position.y, bounds.w * 2, bounds.h * 2, false);
-
-            // DEBUG: Draw fork length
-            Vec2 forkBase = getForkBaseWorld();
-            Vec2 tip = getForkTipWorld();
-            g.setColor(new Color(0, 255, 0, 100));
-            drawLine(g, forkBase.x, forkBase.y, tip.x, tip.y);
-
         } else {
             // Fallback to drawn graphics
             // Draw chassis
@@ -238,23 +227,6 @@ public class Robot extends Body {
             drawLine(g, base.x, base.y + 0.3,
                        base.x + dx * forkLength,
                        base.y + 0.3 + dy * forkLength);
-        }
-
-        // Draw pickup zone - only show when forks are level enough
-        if (tiltDeg >= -2 && tiltDeg <= 5) {
-            AABB zone = getForkPickupZone();
-            g.setColor(new Color(255, 0, 0, 20)); // Very transparent fill
-            drawRectCenter(g, zone.x, zone.y, zone.w * 2, zone.h * 2, true);
-            g.setColor(new Color(255, 0, 0, 60)); // Subtle outline
-            drawRectCenter(g, zone.x, zone.y, zone.w * 2, zone.h * 2, false);
-
-            // Show a small target line above the forks
-            g.setColor(new Color(255, 0, 0, 40));
-            Vec2 tip = getForkTipWorld();
-            Point p1 = SimulationPanel.toScreen(tip.x - forkLength * 0.3, tip.y + 0.3);
-            Point p2 = SimulationPanel.toScreen(tip.x, tip.y + 0.3);
-            g.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{5}, 0));
-            g.drawLine(p1.x, p1.y, p2.x, p2.y);
         }
     }
 

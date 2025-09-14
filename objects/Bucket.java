@@ -87,14 +87,6 @@ public class Bucket extends GameObject {
         g.setColor(new Color(255, 215, 0, 100)); // Semi-transparent outline
         g.setStroke(new BasicStroke(1));
         drawRectCenter(g, x, y, innerW, innerH, false);
-
-        // DEBUG: Draw actual collision bounds for walls
-        g.setColor(new Color(0, 255, 255, 80));
-        g.setStroke(new BasicStroke(1));
-        AABB rightWall = getRightWall();
-        AABB bottom = getBottom();
-        drawRectCenter(g, rightWall.x, rightWall.y, rightWall.w * 2, rightWall.h * 2, true);
-        drawRectCenter(g, bottom.x, bottom.y, bottom.w * 2, bottom.h * 2, true);
     }
 
     private void drawRectCenter(Graphics2D g, double cx, double cy, double w, double h, boolean fill) {
